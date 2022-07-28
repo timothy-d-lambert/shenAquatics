@@ -3,7 +3,8 @@ library(data.table)
 library(mapShen)
 library(plotHacks)
 
-register_google("AIzaSyAMPy_HnX2UjZ5CWD163m4yswi9Fg2yX0g")
+apiKey<-""
+register_google(apiKey)
 
 access<-fread("O:/Working/AQUATIC/Season Planning/Landowner and Stream Info/sitesWithUncertainAccess.csv") %>%
   setkey(SiteID)
@@ -32,7 +33,7 @@ for(s in unique(access$SiteID)){
     ggtitle(paste0(access[SiteID==s,Stream],", ",
                    access[SiteID==s,District]," District, ",
                    access[SiteID==s,County]," County"))
-  
+
   print(map)
 
   dev.off()

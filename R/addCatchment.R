@@ -6,8 +6,16 @@
 #'
 #'@export
 
-addCatchment<-function(data){
-  ws<-readOGR(dsn="C:/Users/echildress/Documents/mapShen/data/gis","CVIWatershed",verbose=F)
+addCatchment<-function(data,shpLoc="network"){
+  if(shpLoc=="network"){
+    shpLoc<-"M:/GISData/basedata/hydro/gis"
+    if(length(list.files("M:/GISData/basedata/hydro/gis"))==0){
+      stop("Not connected to the network. Connect to the network or set a
+           local directory for shpLoc")
+    }
+  }
+
+  ws<-readOGR(dsn=shpLoc,"CVIWatershed",verbose=F)
 
   sites<-aqData("sites") %>%
     .[!is.na(Lon_n83)&!is.na(Lat_n83)]
