@@ -7,7 +7,7 @@
 #'
 #'@export
 
-makeDaymetCov<-function(siteId,file=paste0("C:/Users/echildress/Documents/mapShen/data/daymet/",siteId,".csv")){
+makeDaymetCov<-function(siteId,file=paste0("C:/Users/echildress/OneDrive - DOI/Documents/mapShen/data/daymet/",siteId,".csv")){
   d<-fread(file,skip=7)
   setnames(d,c("year","yday","dayl","prcp","srad","swe","tmax","tmin","vp"))
 

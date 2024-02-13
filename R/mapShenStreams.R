@@ -17,7 +17,7 @@ mapShenStreams<-function(stream=NULL,lwdBoundary=2,
                          border="forestgreen",newBox=NULL,...){
 
   # streams<-readOGR(dsn="M:/GISData/basedata/hydro/gis","Stream")
-  streams<-readOGR(dsn="C:/Users/echildress/Documents/mapShen/data/gis","Stream",verbose=F)
+  streams<-readOGR(dsn="C:/Users/echildress/OneDrive - DOI/Documents/mapShen/data/gis","Stream",verbose=F)
 
 
   if(!is.null(stream)){
@@ -32,7 +32,7 @@ mapShenStreams<-function(stream=NULL,lwdBoundary=2,
   }
 
   # boundary<-readOGR(dsn="M:/GISData/basedata/boundary/gis",layer="PkBndryPly")
-  boundary<-readOGR(dsn="C:/Users/echildress/Documents/mapShen/data/gis",layer="PkBndryPly",verbose=F)
+  boundary<-readOGR(dsn="C:/Users/echildress/OneDrive - DOI/Documents/mapShen/data/gis",layer="PkBndryPly",verbose=F)
 
   if(!is.null(newBox)){
     streams@bbox<-newBox

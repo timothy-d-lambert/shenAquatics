@@ -4,15 +4,18 @@
 #'
 #'@param name My name for the table in the database. Available tables are listed in \code{dbNames}, which is lazy loaded with the package.
 #'@param visitCols Columns from the siteVisits table to add to the output, SiteVisit_ID, SITEID, and sDate are added automatically if SiteVisit_ID is a column in the table
-#'@param siteCols Columns from the sites table to add to the output
+#'@param siteCols Columns from the sites table to add to the output (e.g., Elev_m)
 #'
 #'@export
-aqData<-function(name,visitCols=NULL,siteCols=NULL){
-  oldOpt<-default.stringsAsFactors()
-  options(stringsAsFactors = F)
+aqData<-function(name,visitCols=NULL,siteCols=NULL,conTemp=NULL){
+  # oldOpt<-default.stringsAsFactors() #deprecated
+  # options(stringsAsFactors = F)
+  if(is.null(conTemp)){
+    aqConnector()
+    conTemp<-con
+  }
 
-  aqConnector()
-  d<-sqlQuery(con,paste("select * from",dbNames[myName==name,dbName])) %>%
+  d<-sqlQuery(conTemp,paste("select * from",dbNames[myName==name,dbName])) %>%
     data.table()
 
   if(name=="siteVisits"){setnames(d,"SITEID","SiteID")}
@@ -29,7 +32,7 @@ aqData<-function(name,visitCols=NULL,siteCols=NULL){
   if((name %in% c("sites","siteVisits","siteInfo")&is.null(siteCols)&is.null(visitCols))|
      !"SiteVisit_ID" %in% names(d)) return(d)
 
-  siteVisits<-sqlQuery(con,paste("select ",
+  siteVisits<-sqlQuery(conTemp,paste("select ",
                                  paste(c("SiteVisit_ID","SITEID","sDate",visitCols),collapse=", "),
                                  " from R_SiteVisits")) %>%
     data.table() %>%
@@ -40,7 +43,7 @@ aqData<-function(name,visitCols=NULL,siteCols=NULL){
   d<-siteVisits[d]
 
   if(!is.null(siteCols)){
-    sites<-sqlQuery(con,paste("select ",
+    sites<-sqlQuery(conTemp,paste("select ",
                                    paste(c("SiteID",siteCols),collapse=", "),
                                    " from R_zdd_Sites")) %>%
       data.table() %>%
@@ -50,7 +53,7 @@ aqData<-function(name,visitCols=NULL,siteCols=NULL){
     d<-sites[d]
   }
 
-  options(stringsAsFactors=oldOpt)
+  # options(stringsAsFactors=oldOpt)
 
   return(d)
 }

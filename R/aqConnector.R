@@ -11,13 +11,13 @@ aqConnector<-function(){
   # con<<-odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};
   #                      DBQ=O:/Working/AQUATIC/Database/DataManagement/data/All_Stream_data_2020.accdb")
     con<<-odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};
-                       DBQ=C:/Users/echildress/Documents/mapShen/data/All_Stream_data_2020.accdb")
+                       DBQ=C:/Users/echildress/OneDrive - DOI/Documents/mapShen/data/All_Stream_data_2020.accdb")
   } else{if(class(con)!="RODBC"|
             class(try(sqlQuery(con,"select * from R_zdd_Sites"),silent=T))!="data.frame"){
     # con<<-odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};
     #                    DBQ=O:/Working/AQUATIC/Database/DataManagement/data/All_Stream_data_2020.accdb")
     con<<-odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};
-                       DBQ=C:/Users/echildress/Documents/mapShen/data/All_Stream_data_2020.accdb")
+                       DBQ=C:/Users/echildress/OneDrive - DOI/Documents/mapShen/data/All_Stream_data_2020.accdb")
     }
   }
 }

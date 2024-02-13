@@ -21,7 +21,7 @@ getDaymet<-function(siteId,file=paste0("data/daymet/",siteId,".csv"),startDate="
               "&lon=",lon,
               "&vars=dayl,prcp,srad,swe,tmax,tmin,vp&",
               "start=",startDate,
-              "&end=",endDate,"' -O")
+              "&end=",endDate)
 
   download.file(url,destfile=file)
 }
