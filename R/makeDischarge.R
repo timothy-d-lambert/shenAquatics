@@ -5,15 +5,15 @@
 #'
 #'@export
 
-makeDischarge<-function(excludeSticksBuckets=T,conTemp=NULL){
+makeDischarge<-function(excludeSticksBuckets=T, conTemp=NULL){
 
-  qInfo<-aqData("dischargeInfo",conTemp=conTemp)
+  qInfo<-aqData("dischargeInfo", conTemp=conTemp)
 
   sticksBuckets<-qInfo[grepl("bucket",tolower(Method))|
           grepl("stick",tolower(Method)),.(SiteVisit_ID)]
 
-  q<-aqData("discharge",conTemp) %>%
-    .[!SiteVisit_ID %in% sticksBuckets$SiteVisit_ID] %>%
+  q<-aqData("discharge", conTemp) %>%
+    .[!SiteVisit_ID %in% sticksBuckets$SiteVisit_ID] %>% # exclude stick/bucket spls
     .[SiteVisit_ID %in% qInfo[grepl("pygmy",tolower(Method)),SiteVisit_ID] & Vel > 0,
       ":="(Vel=(0.9604*Vel/60+0.0312)*0.3048,
             Depth_m=Depth_m*0.3048,

@@ -7,9 +7,11 @@
 #'
 #'@export
 
-makeDaymetCov<-function(siteId,file=paste0("C:/Users/echildress/OneDrive - DOI/Documents/mapShen/data/daymet/",siteId,".csv")){
-  d<-fread(file,skip=7)
-  setnames(d,c("year","yday","dayl","prcp","srad","swe","tmax","tmin","vp"))
+makeDaymetCov<-function(
+    siteId,
+    file = paste0("C:/Users/echildress/OneDrive - DOI/Documents/mapShen/data/daymet/", siteId, ".csv")){
+  d <- fread(file, skip=7)
+  setnames(d, c("year","yday","dayl","prcp","srad","swe","tmax","tmin","vp"))
 
   d[,date:=as.Date(paste0(year-1,"-12-31"))+yday]
   d[month(date) %in% 9:11,season:="fall"]

@@ -1,4 +1,4 @@
-#'Downloads dayment data for fish and bug sites
+#'Downloads daymet data for fish and bug sites
 #'
 #'@return Saves daymet temperature and precipitation data to the specified path
 #'
