@@ -10,7 +10,8 @@ aqConnector<-function(){
   if(!exists("con")){
     # con<<-odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};
     #                    DBQ=C:/Users/echildress/OneDrive - DOI/Documents/mapShen/data/All_Stream_data_2020.accdb")
-    con <<- odbcDriverConnect(paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", here("data/All_Stream_data_2020.accdb")))
+    root <- defineRoot() # define project root
+    con <<- odbcDriverConnect(paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(root, "data/All_Stream_data_2020.accdb")))
 
   } else if(class(con)!="RODBC"|
             class(try(sqlQuery(con,"select * from R_zdd_Sites"),silent=T))!="data.frame"){

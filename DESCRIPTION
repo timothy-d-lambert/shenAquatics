@@ -10,4 +10,4 @@ License: GNU
 Depends: data.table, dplyr, RODBC, tidyr, curl, rprojroot, sf
 Encoding: UTF-8
 LazyData: TRUE
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.2

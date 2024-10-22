@@ -4,7 +4,13 @@
 \alias{dpac}
 \title{Distribute parents among children}
 \usage{
-dpac(x, countCol = "INSECT_COU", minLevel = "genus", keepCodeCols = NULL)
+dpac(
+  x,
+  countCol = "INSECT_COU",
+  minLevel = "genus",
+  keepCodeCols = NULL,
+  wholeBugs = F
+)
 }
 \arguments{
 \item{x}{A data.table containing the taxonomic hierarchy (i.e., all taxonomic levels for each taxon) and numbers of individuals}

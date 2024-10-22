@@ -4,7 +4,7 @@
 \alias{makeDischarge}
 \title{Returns calculated discharge by site and date}
 \usage{
-makeDischarge(excludeSticksBuckets = T)
+makeDischarge(excludeSticksBuckets = T, conTemp = NULL)
 }
 \value{
 Discharge in m^3/s

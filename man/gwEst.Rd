@@ -4,7 +4,13 @@
 \alias{gwEst}
 \title{Estimates deep and shallow groundwater influence from paired air and water temperatures after Hare et al. 2020}
 \usage{
-gwEst(data, plotFile = NULL, airThresh = 0.5)
+gwEst(
+  data,
+  plotFile = NULL,
+  airThresh = 0.5,
+  water = "waterTemp",
+  air = "airTemp"
+)
 }
 \arguments{
 \item{data}{A data.table that includes the variables airTemp, waterTemp, and date}

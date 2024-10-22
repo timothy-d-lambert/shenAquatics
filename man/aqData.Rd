@@ -4,14 +4,14 @@
 \alias{aqData}
 \title{Grabs a subset of available tables from the SHEN aquatics database}
 \usage{
-aqData(name, visitCols = NULL, siteCols = NULL)
+aqData(name, visitCols = NULL, siteCols = NULL, conTemp = NULL)
 }
 \arguments{
 \item{name}{My name for the table in the database. Available tables are listed in \code{dbNames}, which is lazy loaded with the package.}
 
 \item{visitCols}{Columns from the siteVisits table to add to the output, SiteVisit_ID, SITEID, and sDate are added automatically if SiteVisit_ID is a column in the table}
 
-\item{siteCols}{Columns from the sites table to add to the output}
+\item{siteCols}{Columns from the sites table to add to the output (e.g., Elev_m)}
 }
 \value{
 Creates a link to the SHEN MS Access database if one does not exist, then downloads a table, converts it to a data.table, and spits it out.

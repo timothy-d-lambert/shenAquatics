@@ -6,7 +6,8 @@
 \usage{
 makeDaymetCov(
   siteId,
-  file = paste0("C:/Users/echildress/Documents/mapShen/data/daymet/", siteId, ".csv")
+  file = paste0("C:/Users/echildress/OneDrive - DOI/Documents/mapShen/data/daymet/",
+    siteId, ".csv")
 )
 }
 \arguments{

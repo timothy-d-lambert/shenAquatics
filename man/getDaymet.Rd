@@ -2,7 +2,7 @@
 % Please edit documentation in R/getDaymet.R
 \name{getDaymet}
 \alias{getDaymet}
-\title{Downloads dayment data for fish and bug sites}
+\title{Downloads daymet data for fish and bug sites}
 \usage{
 getDaymet(
   siteId,
@@ -24,5 +24,5 @@ getDaymet(
 Saves daymet temperature and precipitation data to the specified path
 }
 \description{
-Downloads dayment data for fish and bug sites
+Downloads daymet data for fish and bug sites
 }

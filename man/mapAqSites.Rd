@@ -13,6 +13,7 @@ mapAqSites(
   text = F,
   add = T,
   pch = 19,
+  interactive = T,
   ...
 )
 }
