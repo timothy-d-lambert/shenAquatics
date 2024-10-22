@@ -7,12 +7,12 @@
 #'@param siteCols Columns from the sites table to add to the output (e.g., Elev_m)
 #'
 #'@export
-aqData<-function(name,visitCols=NULL,siteCols=NULL,conTemp=NULL){
-  # oldOpt<-default.stringsAsFactors() #deprecated
+aqData <- function(name, visitCols = NULL, siteCols = NULL, conTemp = NULL){
+  # oldOpt <- default.stringsAsFactors() #deprecated
   # options(stringsAsFactors = F)
   if(is.null(conTemp)){
     aqConnector()
-    conTemp<-con
+    conTemp <- con
   }
 
   d<-sqlQuery(conTemp,paste("select * from",dbNames[myName==name,dbName])) %>%

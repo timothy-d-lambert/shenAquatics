@@ -1,4 +1,4 @@
-library(mapShen)
+library(shenAquatics)
 library(plotHacks)
 aqData("sites")
 con2<-odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};

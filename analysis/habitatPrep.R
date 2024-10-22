@@ -1,14 +1,14 @@
-library(mapShen)
+library(shenAquatics)
 
-sites<-aqData("sites") %>%
+sites <- aqData("sites") %>%
   setkey(SiteID)
 
-fishVisits<-aqData("siteVisits") %>%
+fishVisits <- aqData("siteVisits") %>%
   # .[FishSampleType %in% c("QUANT","QUAL")] %>%
-  .[,.(SiteVisit_ID,sDate,SITEID)] %>%
+  .[,.(SiteVisit_ID,sDate,SiteID)] %>%
   setkey(SiteVisit_ID)
 
-q<-aqData("discharge") %>%
+q <- aqData("discharge") %>%
   setkey(SiteVisit_ID) %>%
   .[SiteVisit_ID %in% fishVisits$SiteVisit_ID] %>%
   .[SiteVisit_ID != "1997-07-16_F_2F055"] %>%
@@ -17,7 +17,7 @@ q<-aqData("discharge") %>%
 
 
 
-habitat<-aqData("habitat") %>%
+habitat <- aqData("habitat") %>%
   # .[SiteVisit_ID %in% fishVisits$SiteVisit_ID] %>%
   setkey(SiteVisit_ID) %>%
   .[,.(pools=mean(Pools,na.rm=T),
@@ -25,13 +25,13 @@ habitat<-aqData("habitat") %>%
        slope=mean(Grad_percent,na.rm=T)),
     SiteVisit_ID]
 
-substrate<-aqData("habitatSubstrate") %>%
+substrate <- aqData("habitatSubstrate") %>%
   setkey(SiteVisit_ID) %>%
   .[SiteVisit_ID!="2000-07-18_F_2F040"|Depth_m<1] %>%
   # .[SiteVisit_ID %in% fishVisits$SiteVisit_ID] %>%
   .[,.(depth=mean(Depth_m,na.rm=T)),SiteVisit_ID]
 
-wq<-aqData("wq") %>%
+wq <- aqData("wq") %>%
   # .[SiteVisit_ID %in% fishVisits$SiteVisit_ID] %>%
   setkey(SiteVisit_ID) %>%
   .[,.(temp=mean(Temp,na.rm=T),
@@ -46,15 +46,15 @@ wq<-aqData("wq") %>%
   .[pH==0,pH:=NA] %>%
   .[cond==0,cond:=NA]
 
-hab<-merge(wq,habitat,all=T) %>%
+hab <- merge(wq,habitat,all=T) %>%
   merge(q,all=T) %>%
   merge(substrate,all=T)
 
-hab<-fishVisits[hab]
+hab <- fishVisits[hab]
 hab[year(sDate)==1994,pH:=NA]
 hab[q>1,q:=NA]
 hab[,SiteVisit_ID:=NULL]
-setkey(hab,SITEID,sDate)
+setkey(hab,SiteID,sDate)
 
 
 
