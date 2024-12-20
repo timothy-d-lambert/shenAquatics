@@ -7,7 +7,7 @@ Maintainer: Evan Childress <evan_childress@nps.gov>
 Description: More about what it does (may be more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: GNU
-Depends: data.table, dplyr, RODBC, tidyr, curl, rprojroot, sf
+Depends: data.table, dplyr, RODBC, tidyr, curl, rprojroot, sf, tmap
 Encoding: UTF-8
 LazyData: TRUE
 RoxygenNote: 7.3.2

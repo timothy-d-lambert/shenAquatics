@@ -35,6 +35,7 @@ mapShenStreams <- function(stream = NULL, lwdBoundary = 2,
 
   plot(st_geometry(streams), col = streamCol, add = add, ...)
   plot(st_geometry(boundary), col = NA, border = border, add = TRUE, lwd = lwdBoundary, ...)
+
 }
 
 # Example usage:

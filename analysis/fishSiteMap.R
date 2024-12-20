@@ -1,9 +1,9 @@
 library(plotHacks)
-library(mapShen)
+library(shenAquatics)
 
-sites<-aqData("sites")
+sites <- aqData("sites")
 
-tiff.par("C:/Users/echildress/Documents/presentations/fishSites.tiff",width=5,height=8,mar=c(0,0,0,0))
+# tiff.par("C:/Users/echildress/Documents/presentations/fishSites.tiff",width=5,height=8,mar=c(0,0,0,0))
 mapShenStreams(streamCol = 'gray20',bg='black',border="darkgreen")
 
 mapAqSites(siteId=sites[FISH_SiteType=="Primary",SiteID],pch=19,col="cornflowerblue")
