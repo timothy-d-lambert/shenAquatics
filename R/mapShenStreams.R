@@ -1,11 +1,23 @@
-library(sf)
-
+#'Create a map of streams within and surrounding SHEN
+#'@return A map with desired streams and sites
+#'@param stream A single value or vector containing the quoted names of streams to be mapped.
+#'@param lwdBoundary line width for Shen boundary
+#'@param wholePark Logical indicating whether to map the whole park even if a subset of streams is selected. If wholePark is FALSE, the extent of the map will be trimmed to the area immediately surrounding selected streams.
+#'@param add Logical indicating whether this should be added to an existing map (TRUE) or if a new map should be created (FALSE)
+#'@param existing_map If add is TRUE, the existing map to which this plot is added
+#'@param border color for the SHEN border.
+#'@param newBox A bbox that defines the area to be plotted.
+#'
+#'@details This function is a wrapper that creates maps of streams within and surrounding SHEN.
+#'
+#'@export
 mapShenStreams <- function(stream = NULL, lwdBoundary = 2,
-                           wholePark = FALSE, add = FALSE,
+                           wholePark = FALSE,
+                           add = FALSE, existing_map = NULL,
                            streamCol = "blue", border = "forestgreen",
                            newBox = NULL, ...) {
 
-  # Read the shapefiles using sf
+  # Read the streams shapefiles using sf
   root <- defineRoot() # define project root
   streams <- st_read(dsn = file.path(root, "data/gis"),
                      layer = "Stream", quiet = TRUE)
@@ -33,8 +45,21 @@ mapShenStreams <- function(stream = NULL, lwdBoundary = 2,
     st_bbox(streams) <- st_bbox(boundary)
   }
 
-  plot(st_geometry(streams), col = streamCol, add = add, ...)
-  plot(st_geometry(boundary), col = NA, border = border, add = TRUE, lwd = lwdBoundary, ...)
+  ## Creating the map
+  ## v1:
+  # plot(st_geometry(streams), col = streamCol, add = add, ...)
+  # plot(st_geometry(boundary), col = NA, border = border, add = TRUE, lwd = lwdBoundary, ...)
+  # v2:
+  if(add == TRUE) {
+    map <- existing_map
+  } else {
+    map <- NULL
+  }
+  map <- map + tm_shape(streams) +
+    tm_lines(col = streamCol, lwd = 1) +  # Adjust line width as needed
+    tm_shape(boundary) +
+    tm_borders(col = border, lwd = lwdBoundary)
+  return(map)
 
 }
 

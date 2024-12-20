@@ -7,13 +7,15 @@
 #'@param aqinType A vector of site types for aquatic invertebrates for which sites should be returned.
 #'@param text Logical indicating whether site names should be added next to points.
 #'@param add Logical indicating whether to add to an existing map (TRUE) or create a new map (FALSE).
+#'#'@param existing_map If add is TRUE, the existing map to which this plot is added
 #'
 #'@details This function plots the location of sampling sites for the SHEN aquatic resource monitoring program.
 #'
 #'@export
 mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
                        fishType = NULL, aqinType = NULL, text = FALSE,
-                       add = TRUE, pch = 19, interactive = TRUE, ...) {
+                       add = TRUE, existing_map = NULL,
+                       pch = 19, interactive = TRUE, ...) {
 
   # should move these to the package level
 
@@ -76,17 +78,23 @@ mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
   if (interactive) {
     tmap_mode("view")
     if (text) {
-      tm_shape(point) + tm_text("SiteID") + tm_shape(streams) + tm_lines(col = 'blue')
+      map <- tm_shape(point) + tm_text("SiteID") + tm_shape(streams) + tm_lines(col = 'blue')
     } else {
-      tm_shape(point) + tm_dots(col = 'red') + tm_shape(streams) + tm_lines(col = 'blue')
+      map <- tm_shape(point) + tm_dots(col = 'red') + tm_shape(streams) + tm_lines(col = 'blue')
     }
   } else {
     if (text) {
-      tm_shape(point) + tm_text("SiteID") + tm_shape(streams) + tm_lines(col = 'blue')
+      map <- tm_shape(point) + tm_text("SiteID") + tm_shape(streams) + tm_lines(col = 'blue')
     } else {
-      tm_shape(point) + tm_dots(col = 'red') + tm_shape(streams) + tm_lines(col = 'blue')
+      map <- tm_shape(point) + tm_dots(col = 'red') + tm_shape(streams) + tm_lines(col = 'blue')
     }
   }
+
+  map <- existing_map + tm_shape(streams) +
+    tm_lines(col = streamCol, lwd = 1) +  # Adjust line width as needed
+    tm_shape(boundary) +
+    tm_borders(col = border, lwd = lwdBoundary)
+  return(map)
 
   # odbcClose(con) # explicitly close the connection
 
