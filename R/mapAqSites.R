@@ -20,7 +20,10 @@ mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
   # should move these to the package level
 
   con <- aqConnector() # establish a database connection
-  on.exit(odbcClose(con)) # ensure the connection is closed when the function exits
+  on.exit({
+    odbcClose(con) # ensure the connection is closed when the function exits
+    rm(con, envir = .GlobalEnv) # remove con from global environment
+  })
 
   root <- defineRoot() # define project root
   gisDir <- file.path(root, "data/gis/")
@@ -75,25 +78,57 @@ mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
                               Lat_n83, Lon_n83, UTMX_E, UTMY_N)], coords = c("UTMX_E", "UTMY_N"))
   st_crs(point) <- st_crs(boundary)
 
-  if (interactive) {
-    tmap_mode("view")
-    if (text) {
-      map <- tm_shape(point) + tm_text("SiteID") + tm_shape(streams) + tm_lines(col = 'blue')
-    } else {
-      map <- tm_shape(point) + tm_dots(col = 'red') + tm_shape(streams) + tm_lines(col = 'blue')
-    }
-  } else {
-    if (text) {
-      map <- tm_shape(point) + tm_text("SiteID") + tm_shape(streams) + tm_lines(col = 'blue')
-    } else {
-      map <- tm_shape(point) + tm_dots(col = 'red') + tm_shape(streams) + tm_lines(col = 'blue')
-    }
-  }
+  # col.sites = "MAJ_GEOL" # c("red", "Elev_m")[1] # color for the sites, which may either be a color name (e.g., "red") or a column name of the sites table that defines a numeric or factor variable along which colors should be defined
+  # title.col.sites = "Geology" # "Elevation (m)"
+  # size.sites = 0.4 # the size to be used for sites, as called by tm_dots
+  # col.streams = "blue" # the color to be used for streams
+  # lwd.streams = 1 # the lwd to be used for streams
+  # col.boundary = "black" # the color to be used for the park boundary
+  # lwd.boundary = 2 # the lwd to be used for the park boundary
+  # size.text = 0.5 # the size to use for text labels, if text = TRUE
+  #
+  # map <- existing_map +
+  #   tm_shape(boundary) +
+  #   tm_borders(col = col.boundary, lwd = lwd.boundary) +
+  #   tm_shape(streams) +
+  #   tm_lines(col = col.streams, lwd = lwd.streams) +
+  #   tm_shape(point) +
+  #   tm_dots(col = col.sites, # "Elev_m",
+  #           title = title.col.sites, #"Elevation (m)",
+  #           size = size.sites) +
+  #   tm_layout(legend.position = c("left", "top"))
+  # if(text) {
+  #   map <- map + tm_shape(point) +
+  #     tm_text("SiteID", size = size.text)
+  # }
+  # print(map)
 
-  map <- existing_map + tm_shape(streams) +
-    tm_lines(col = streamCol, lwd = 1) +  # Adjust line width as needed
-    tm_shape(boundary) +
-    tm_borders(col = border, lwd = lwdBoundary)
+  tmap_args_list = list(
+    tm_dots = list(col = c("red", "Elev_m", "MAJ_GEOL")[1],
+                   size = 0.4,
+                   title = c("", "Elevation (m)", "Geology")[1]),
+    tm_borders = list(col = "black",
+                      lwd = 2),
+    tm_lines = list(col = "blue",
+                    lwd = 1),
+    tm_text = list(size = 0.5),
+    tm_layout = list(legend.position = c("left", "top"))
+  )
+
+  map <- existing_map +
+    tm_shape(boundary) + # park boundary
+    do.call(tm_borders, tmap_args_list$tm_borders) +
+    tm_shape(streams) + # stream lines
+    do.call(tm_lines, tmap_args_list$tm_lines) +
+    tm_shape(point) + # sites
+    do.call(tm_dots, tmap_args_list$tm_dots) +
+    tm_layout(legend.position = c("left", "top"))
+  if(text) {
+    map <- map + tm_shape(point) +
+      tm_text("SiteID", size = size.text)
+  }
+  print(map)
+
   return(map)
 
   # odbcClose(con) # explicitly close the connection

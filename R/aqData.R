@@ -12,7 +12,11 @@ aqData <- function(name, visitCols = NULL, siteCols = NULL){
   # options(stringsAsFactors = F)
 
   con <- aqConnector()
-  on.exit(odbcClose(con)) # ensure the connection is closed when the function exits
+  # on.exit(odbcClose(con)) # ensure the connection is closed when the function exits
+  on.exit({
+    odbcClose(con) # ensure the connection is closed when the function exits
+    rm(con, envir = .GlobalEnv) # remove con from global environment
+  })
 
   d <- sqlQuery(con,
                 paste("select * from",dbNames[myName==name,dbName])) %>%
@@ -58,7 +62,7 @@ aqData <- function(name, visitCols = NULL, siteCols = NULL){
 
   # options(stringsAsFactors=oldOpt)
 
-  odbcClose(con) # explicitly close the connection
+  # odbcClose(con) # explicitly close the connection
 
   return(d)
 }
