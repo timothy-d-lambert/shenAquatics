@@ -3,14 +3,31 @@ library(shenAquatics)
 
 sites <- aqData("sites")
 
-# tiff.par("C:/Users/echildress/Documents/presentations/fishSites.tiff",width=5,height=8,mar=c(0,0,0,0))
+
+tmap_mode(c("plot", "view")[1]) # define tmap mode
+
 streams_map <- mapShenStreams(streamCol = 'gray20',bg='black',border="darkgreen")
 print(streams_map)
 
-##### UNDER CONSTRUCTION: LEFT OFF HERE. JUST CHANGED mapAqSites.R to use add (modeled after similar changes for mapShenStreams), but haven't tested it. 12/20/2024 -T Lambert #####
-mapAqSites(siteId = sites[FISH_SiteType=="Primary",SiteID],
-           pch=19, col="cornflowerblue")
-mapAqSites(siteId=sites[FISH_SiteType=="Secondary",SiteID],pch=19,col="darkseagreen")
+#
+site_map <- mapAqSites(siteId = sites[FISH_SiteType=="Primary",SiteID],
+                       tmap_args_list = list(
+                         tm_dots = list(col = c("darkblue", "Elev_m", "MAJ_GEOL")[1],
+                                        size = 0.2,
+                                        title = c("", "Elevation (m)", "Geology")[1]),
+                         tm_borders = list(col = "black",
+                                           lwd = 2)
+                         )
+                       )
+print(site_map)
+
+
+site_map <- mapAqSites(siteId = sites[FISH_SiteType=="Primary",SiteID],
+                       add = TRUE, existing_map = streams_map)
+print(site_map)
+
+site_map2 <- mapAqSites(siteId=sites[FISH_SiteType=="Secondary",SiteID])
+print(site_map2)
 
 legend("left",legend=c("Primary","Secondary"),
        col=c("cornflowerblue","darkseagreen"),pch=19,bg='black',text.col='gray90',
