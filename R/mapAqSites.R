@@ -116,7 +116,8 @@ mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
     do.call(tm_lines, tmap_args_list$tm_lines) +
     tm_shape(point) + # sites
     do.call(tm_dots, tmap_args_list$tm_dots) +
-    tm_layout(legend.position = c("left", "top"))
+    do.call(tm_layout, tmap_args_list$tm_layout) # NEW -- TEST FUNCTIONALITY!
+    # tm_layout(legend.position = c("left", "top"))
 
   # add text labels for sites
   if(text) {

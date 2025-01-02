@@ -6,10 +6,13 @@ sites <- aqData("sites")
 
 tmap_mode(c("plot", "view")[1]) # define tmap mode
 
-streams_map <- mapShenStreams(streamCol = 'gray20',bg='black',border="darkgreen")
+# Map of Shenandoah streams and park boundary
+streams_map <- mapShenStreams(streamCol = 'cornflowerblue',
+                              border="darkgreen",
+                              bg.color = NA)
 print(streams_map)
 
-#
+# Map of primary fish sites
 site_map <- mapAqSites(siteId = sites[FISH_SiteType=="Primary",SiteID],
                        tmap_args_list = list(
                          tm_dots = list(col = c("darkblue", "Elev_m", "MAJ_GEOL")[1],
@@ -21,7 +24,7 @@ site_map <- mapAqSites(siteId = sites[FISH_SiteType=="Primary",SiteID],
                        )
 print(site_map)
 
-
+# Map of secondary
 site_map <- mapAqSites(siteId = sites[FISH_SiteType=="Primary",SiteID],
                        add = TRUE, existing_map = streams_map)
 print(site_map)
