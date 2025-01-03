@@ -1,11 +1,11 @@
 #'Create a map of streams within and surrounding SHEN
 #'@return A map with desired streams and sites
 #'@param stream A single value or vector containing the quoted names of streams to be mapped.
-#'@param border.lwd line width for Shen boundary
+#'@param border.lwd line width for the Shenandoah National Park boundary
 #'@param wholePark Logical indicating whether to map the whole park even if a subset of streams is selected. If wholePark is FALSE, the extent of the map will be trimmed to the area immediately surrounding selected streams.
-#'@param base_map A base map on which this map should be overlaid; the default value of NULL indicates there is no base map
+#'@param base_map A base map on which this map should be overlaid; the default value of NULL creates a new map (i.e., there is no base map)
 #'@param stream.color color for the streams
-#'@param border.color color for the SHEN border
+#'@param border.color color for the park boundary
 #'@param bg.color color for the background
 #'@param newBox A bbox that defines the area to be plotted.
 #'
