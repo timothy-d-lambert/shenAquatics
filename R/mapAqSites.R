@@ -17,20 +17,23 @@
 mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
                        fishType = NULL, aqinType = NULL, text = FALSE,
                        base_map = NULL,
+                       ## UNDER CONSTRUCTION: add color_key
+                       # color_key = NA,
+                       # color_key = data.frame(siteId = )
                        xlim_bbox = c(0,1), ylim_bbox = c(0,1),
                        tmap_args_list = vector(mode = "list", length = 0)
-                         # list(
-                         #   tm_dots = list(col = c("red", "Elev_m", "MAJ_GEOL")[1],
-                         #                  size = 0.4,
-                         #                  title = c("", "Elevation (m)", "Geology")[1]),
-                         #   tm_borders = list(col = "black",
-                         #                     lwd = 2),
-                         #   tm_lines = list(col = "cornflowerblue",
-                         #                   lwd = 1),
-                         #   tm_text = list(size = 0.5),
-                         #   tm_layout = list(legend.position = c("left", "top"))
-                         # )
-                      ) {
+                       # list(
+                       #   tm_dots = list(col = c("red", "Elev_m", "MAJ_GEOL")[1],
+                       #                  size = 0.4,
+                       #                  title = c("", "Elevation (m)", "Geology")[1]),
+                       #   tm_borders = list(col = "black",
+                       #                     lwd = 2),
+                       #   tm_lines = list(col = "cornflowerblue",
+                       #                   lwd = 1),
+                       #   tm_text = list(size = 0.5),
+                       #   tm_layout = list(legend.position = c("left", "top"))
+                       # )
+) {
 
   con <- aqConnector() # establish a database connection
   on.exit({
@@ -50,8 +53,8 @@ mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
     select(STREAM_NAM)
 
   sites <- sqlQuery(con,"select * from R_zdd_Sites") %>%
-        data.table() %>%
-        setkey(SiteID)
+    data.table() %>%
+    setkey(SiteID)
 
   if (!is.null(stream)) {
     sites <- sites[tolower(STREAM) %in% tolower(stream)]
@@ -75,10 +78,14 @@ mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
 
   if (length(noCoord) > 0) {
     warning(paste0("Site(s): ", paste(as.character(noCoord), collapse = ", "),
-                " skipped due to lacking coordinates in the database"))
+                   " skipped due to lacking coordinates in the database"))
   }
 
   sites <- sites[!is.na(Lon_n83) & !is.na(Lat_n83)]
+
+  # UNDER CONSTRUCTION: add color variable, if provided
+
+
   point <- st_as_sf(sites[, .(SiteID, Site_Name, STREAM, FISH_SiteType, AQIN_SiteType,
                               Elev_m, PCT_SILI, PCT_GRAN, PCT_BASA, MAJ_GEOL,
                               Lat_n83, Lon_n83, UTMX_E, UTMY_N)], coords = c("UTMX_E", "UTMY_N"))
@@ -88,8 +95,8 @@ mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
   ## Define plotting arguments
   # Define default plotting arguments
   default_tm_dots <- list(
-    col = c("darkblue", "Elev_m", "MAJ_GEOL")[1],
-    size = 0.4,
+    col = c("red3", "Elev_m", "MAJ_GEOL")[1],
+    size = 0.3,
     title = c("", "Elevation (m)", "Geology")[1]
   )
   default_tm_borders <- list(
@@ -122,66 +129,38 @@ mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
     default_tm_layout, tmap_args_list$tm_layout %||% list())
 
 
-  # make some bbox magic
+  # Extend bbox limits (if necessary)
   bbox_new <- st_bbox(streams) # current bounding box
-
-  xrange <- bbox_new$xmax - bbox_new$xmin # range of x values
-  yrange <- bbox_new$ymax - bbox_new$ymin # range of y values
-
-  bbox_new["xmin"] <- bbox_new["xmin"] + (xlim_bbox[1] * xrange)
-  bbox_new["xmax"] <- bbox_new["xmax"] + ((xlim_bbox[2]-1) * xrange)
-  bbox_new["ymin"] <- bbox_new["ymin"] + (ylim_bbox[1] * yrange)
-  bbox_new["ymax"] <- bbox_new["ymax"] + ((ylim_bbox[2]-1) * yrange)
-
+  if(!all(xlim_bbox == c(0,1),
+          ylim_bbox == c(0,1))) {
+    xrange <- bbox_new$xmax - bbox_new$xmin # range of x values
+    yrange <- bbox_new$ymax - bbox_new$ymin # range of y values
+    bbox_new["xmin"] <- bbox_new["xmin"] + (xlim_bbox[1] * xrange)
+    bbox_new["xmax"] <- bbox_new["xmax"] + ((xlim_bbox[2]-1) * xrange)
+    bbox_new["ymin"] <- bbox_new["ymin"] + (ylim_bbox[1] * yrange)
+    bbox_new["ymax"] <- bbox_new["ymax"] + ((ylim_bbox[2]-1) * yrange)
+  }
   bbox_new <- bbox_new %>%  # take the bounding box ...
     st_as_sfc() # ... and make it a sf polygon
 
-  # BACKUP ATTEMPT USING extendBbox() from plotHacks #
-  # # Extend bbox limits, if necessary
-  # bbox <- st_bbox(streams)
-  # new_bbox <- extendBbox(bbox,
-  #                        xlim = xlim_bbox,
-  #                        ylim = ylim_bbox)
-  # # Assign the new bounding box back to the streams object
-  # st_geometry(streams) <- st_geometry(streams) * new_bbox
+  # Make the map
+  map <- base_map +
+    tm_shape(streams, bbox = bbox_new) + # stream lines
+    do.call(tm_lines, tmap_args_list$tm_lines) +
+    tm_shape(boundary) + # park boundary
+    do.call(tm_borders, tmap_args_list$tm_borders) +
+    tm_shape(point) + # sites
+    do.call(tm_dots, tmap_args_list$tm_dots) +
+    do.call(tm_layout, tmap_args_list$tm_layout)
 
-    # Make the map
-    map <- base_map +
-      tm_shape(streams, bbox = bbox_new) + # stream lines
-      do.call(tm_lines, tmap_args_list$tm_lines) +
-      tm_shape(boundary) + # park boundary
-      do.call(tm_borders, tmap_args_list$tm_borders) +
-      tm_shape(point) + # sites
-      do.call(tm_dots, tmap_args_list$tm_dots) +
-      do.call(tm_layout, tmap_args_list$tm_layout)
+  # add text labels for sites
+  if(text) {
+    map <- map + tm_shape(point) +
+      tm_text("SiteID", size = size.text)
+  }
+  # print(map)
 
-    # add text labels for sites
-    if(text) {
-      map <- map + tm_shape(point) +
-        tm_text("SiteID", size = size.text)
-    }
-    # print(map)
-
-    return(map)
-#
-#   # Make the map
-#   map <- base_map +
-#     tm_shape(streams) + # stream lines
-#     do.call(tm_lines, tmap_args_list$tm_lines) +
-#     tm_shape(boundary) + # park boundary
-#     do.call(tm_borders, tmap_args_list$tm_borders) +
-#     tm_shape(point) + # sites
-#     do.call(tm_dots, tmap_args_list$tm_dots) +
-#     do.call(tm_layout, tmap_args_list$tm_layout)
-#
-#   # add text labels for sites
-#   if(text) {
-#     map <- map + tm_shape(point) +
-#       tm_text("SiteID", size = size.text)
-#   }
-#   # print(map)
-#
-#   return(map)
+  return(map)
 
 }
 

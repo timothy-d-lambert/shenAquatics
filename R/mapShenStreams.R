@@ -12,10 +12,10 @@
 #'@details This function is a wrapper that creates maps of streams within and surrounding SHEN.
 #'
 #'@export
-mapShenStreams <- function(stream = NULL, border.lwd = 2,
+mapShenStreams <- function(stream = NULL, border.lwd = 3,
                            wholePark = FALSE,
                            base_map = NULL,
-                           stream.color = "blue",
+                           stream.color = "cornflowerblue",
                            border.color = "forestgreen",
                            bg.color = NA,
                            newBox = NULL) {

@@ -11,27 +11,14 @@ sites <- aqData("sites")
 tmap_mode(c("plot", "view")[1]) # define tmap mode
 
 # Map of Shenandoah streams and park boundary
-streams_map <- mapShenStreams(stream.color = 'cornflowerblue',
-                              border.color="forestgreen",
-                              border.lwd = 3,
-                              bg.color = NA)
+streams_map <- mapShenStreams()
 print(streams_map)
 
 
 # Map of primary fish sites
 png(filename = here("figures", "fishSiteMap_primary.png"),
     width = 3.75, height = 6, units = "in", res = 250)
-site_map <- mapAqSites(siteId = sites[FISH_SiteType=="Primary",SiteID],
-                       tmap_args_list = list(
-                         tm_lines = list(col = "cornflowerblue",
-                                         lwd = 1),
-                         tm_dots = list(col = c("red3", "Elev_m", "MAJ_GEOL")[1],
-                                        size = 0.3,
-                                        title = c("", "Elevation (m)", "Geology")[1]),
-                         tm_borders = list(col = "black",
-                                           lwd = 2)
-                         )
-                       )
+site_map <- mapAqSites(siteId = sites[FISH_SiteType=="Primary",SiteID])
 print(site_map)
 dev.off()
 
@@ -45,10 +32,8 @@ site_map <- mapAqSites(
                     lwd = 1),
     tm_dots = list(col = c("FISH_SiteType"),
                    size = 0.2,
-                   title = c("Fish site type"),
-                   palette = "Set1"),
-    tm_borders = list(col = "black",
-                      lwd = 2)
+                   title = c("Site type"),
+                   palette = "Set1")
   )
 )
 print(site_map)
@@ -86,10 +71,6 @@ site_map <- mapAqSites(
                    size = 0.2,
                    title = c("Elevation (m)"),
                    style = "pretty",
-                   # options: "cat", "fixed", "sd", "equal", "pretty",
-                   # "quantile", "kmeans", "hclust", "bclust", "fisher",
-                   # "jenks", "dpih", "headtails", "log10_pretty",
-                   # "cont", "order", "log10" # continuous
                    palette = "viridis",
                    legend.col.reverse = TRUE,
                    legend.hist = TRUE),
@@ -100,19 +81,11 @@ site_map <- mapAqSites(
 )
 print(site_map)
 dev.off()
-# Map sites by geology
 
+
+#### OTHER MAPS TO MAKE: ####
+# Map sites by geology
 # Map sites by stream temperature sensitivity (this will be done in TSS.stats.SHEN package instead)
 
 
-tiff.par("C:/Users/echildress/Documents/presentations/aqinSites.tiff",width=5,height=8,mar=c(0,0,0,0))
-mapShenStreams(stream.color = 'gray20',bg='black',border="darkgreen")
 
-mapAqSites(siteId=sites[AQIN_SiteType=="Primary",SiteID],pch=19,col="cornflowerblue")
-mapAqSites(siteId=sites[AQIN_SiteType=="Secondary",SiteID],pch=19,col="darkseagreen")
-
-legend("left",legend=c("Primary","Secondary"),
-       col=c("cornflowerblue","darkseagreen"),pch=19,bg='black',text.col='gray90',
-       text.font=2,pt.cex=1,cex=1.5)
-
-dev.off()
