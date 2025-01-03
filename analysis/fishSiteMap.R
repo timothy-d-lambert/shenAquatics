@@ -88,4 +88,41 @@ dev.off()
 # Map sites by stream temperature sensitivity (this will be done in TSS.stats.SHEN package instead)
 
 
+#### Sample use of site_vars argument (in mapAqSites()) ####
+# The site_vars argument adds additional variables to the sites data table, which can then be used as the variable by which site colors are mapped. The example below shows how this is done for latitude (pretending for the moment that it is not in the sites data table to begin with):
+
+rm(list = ls())
+library(plotHacks)
+library(shenAquatics)
+library(here)
+here::i_am("analysis/fishSiteMap.R")
+tmap_mode(c("plot", "view")[1]) # define tmap mode
+
+
+# restrict to two columns: siteID and Lat_n83
+sites <- aqData("sites") # BUG TO FIX: Doesn't seem like this should be needed, but ERROR IN mapAqSites() without this global variable. Why?
+site_vars <- aqData("sites") %>%
+  # select columns by name
+  select(SiteID, Lat_n83) %>%
+  # rename column Lat_n83 to be color_var
+  rename(color_var = Lat_n83)
+
+# map using the new color_var
+site_map <- mapAqSites(
+  siteId = sites[FISH_SiteType %in% c("Primary","Secondary"), SiteID],
+  site_vars = site_vars,
+  tmap_args_list = list(
+    tm_lines = list(col = "lightblue",
+                    lwd = 1),
+    tm_dots = list(col = c("color_var"),
+                   size = 0.2,
+                   title = c("Latitude"),
+                   style = c("cont","order")[2],
+                   palette = "viridis",
+                   legend.col.reverse = TRUE),
+    tm_borders = list(col = "burlywood3",
+                      lwd = 2)
+  )
+)
+print(site_map)
 

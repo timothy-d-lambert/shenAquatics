@@ -17,9 +17,7 @@
 mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
                        fishType = NULL, aqinType = NULL, text = FALSE,
                        base_map = NULL,
-                       ## UNDER CONSTRUCTION: add color_key
-                       # color_key = NA,
-                       # color_key = data.frame(siteId = )
+                       site_vars = NULL,
                        xlim_bbox = c(0,1), ylim_bbox = c(0,1),
                        tmap_args_list = vector(mode = "list", length = 0)
                        # list(
@@ -83,21 +81,37 @@ mapAqSites <- function(stream = NULL, watershed = NULL, siteId = NULL,
 
   sites <- sites[!is.na(Lon_n83) & !is.na(Lat_n83)]
 
-  # UNDER CONSTRUCTION: add color variable, if provided
+  # UNDER CONSTRUCTION: add additional site variables, if provided
+  if(!is.null(site_vars)) {
+    sites2 <- sites %>%
+      left_join(site_vars, by = "SiteID") %>%
+      # select columns
+      select(SiteID, Site_Name, STREAM, FISH_SiteType, AQIN_SiteType,
+             Elev_m, PCT_SILI, PCT_GRAN, PCT_BASA, MAJ_GEOL,
+             Lat_n83, Lon_n83, UTMX_E, UTMY_N, eval(colnames(site_vars)[-1]))
+  } else {
+    sites2 <- sites
+  }
 
 
-  point <- st_as_sf(sites[, .(SiteID, Site_Name, STREAM, FISH_SiteType, AQIN_SiteType,
-                              Elev_m, PCT_SILI, PCT_GRAN, PCT_BASA, MAJ_GEOL,
-                              Lat_n83, Lon_n83, UTMX_E, UTMY_N)], coords = c("UTMX_E", "UTMY_N"))
+  point <- st_as_sf(sites2,
+                    coords = c("UTMX_E", "UTMY_N"))
+
+  ## OLD VERSION:
+  # point <- st_as_sf(sites[, .(SiteID, Site_Name, STREAM, FISH_SiteType, AQIN_SiteType,
+  #                             Elev_m, PCT_SILI, PCT_GRAN, PCT_BASA, MAJ_GEOL,
+  #                             Lat_n83, Lon_n83, UTMX_E, UTMY_N)],
+  #                   coords = c("UTMX_E", "UTMY_N"))
+
   st_crs(point) <- st_crs(boundary)
 
 
   ## Define plotting arguments
   # Define default plotting arguments
   default_tm_dots <- list(
-    col = c("red3", "Elev_m", "MAJ_GEOL")[1],
+    col = c("red3", "Elev_m", "MAJ_GEOL", "color_var")[1],
     size = 0.3,
-    title = c("", "Elevation (m)", "Geology")[1]
+    title = c("", "Elevation (m)", "Geology", "Added color variable")[1]
   )
   default_tm_borders <- list(
     col = "black",
